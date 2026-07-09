@@ -1,32 +1,59 @@
 # RocketCAE
 
-**Preliminary liquid rocket engine trade studies** using [NASA CEA](https://github.com/nasa/cea) from Python — with a CLI and a simple Streamlit GUI.
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![CEA](https://img.shields.io/badge/engine-NASA%20CEA-informational)](https://github.com/nasa/cea)
 
-RocketCAE is a cleaner, modern take on the **CHEMA** graduation project concept (University of Turkish Aeronautical Association): drive CEA over a design space, optimize a few objectives, and present results without claiming flight-ready “novel rockets.”
+**Preliminary liquid rocket engine trade studies** using [NASA CEA](https://github.com/nasa/cea) — Python library, CLI, and Streamlit GUI.
 
-> Theoretical chemical-equilibrium performance only. Not a substitute for cycle analysis, cooling, structures, or test.
+> **Not flight hardware design.** Outputs are theoretical chemical-equilibrium performance only (Isp, c\*, Tc, …). They do **not** include turbopumps, cooling, structures, injectors, or vehicle Δv.
+
+## Heritage (CHEMA → RocketCAE)
+
+RocketCAE is a **modern Python continuation of the CHEMA *concept*** from a 2017 graduation project at the University of Turkish Aeronautical Association:
+
+> *Preliminary Design, Basic Simulation and Optimization of Liquid Rocket Engines*  
+> M. A. Kul, Y. Seymen, M. E. Yıldız, S. M. Köroğlu  
+> Advisors: Assist. Prof. S. Balage, Assist. Prof. D. S. Körpe
+
+CHEMA used MATLAB + legacy CEA executables. **RocketCAE is a new codebase** (not a port of the MATLAB GUI) that keeps the same educational goal — explore many bipropellant design points and lightly optimize — on top of the official modern [`cea`](https://github.com/nasa/cea) package.
+
+Original MATLAB dumps, media, and binaries are **not** published here (local-only / gitignored). See [docs/heritage.md](docs/heritage.md).
 
 ## Features
 
-| Capability | How |
-|------------|-----|
+| Capability | Command / entry |
+|------------|-----------------|
 | Single bipropellant evaluation | `rocketcae run` |
 | O/F, Pc, Ae/At sweeps | `rocketcae sweep` |
-| Maximize Isp (or c*, density-Isp) | `rocketcae optimize` |
+| Maximize Isp / c\* / density-Isp | `rocketcae optimize` |
 | Rank curated propellant pairs | `rocketcae rank` |
 | Pareto (max Isp, min Tc) | `rocketcae pareto` |
+| **RP-1311 Example 8 validation** | `rocketcae validate` |
 | GUI | `streamlit run app/streamlit_app.py` |
 
-Depends on the official package: `pip install cea` ([docs](https://nasa.github.io/cea/)).
+## Validation (NASA RP-1311 Example 8)
+
+RocketCAE checks live CEA results against the published **Example 8** rocket case (IAC, H₂(L)/O₂(L), O/F ≈ 5.55, Pc ≈ 53.3 bar) from the CEA documentation and NASA RP-1311 [[1]](#references).
+
+```bash
+python -m rocketcae.cli validate
+# or
+python examples/rp1311_example8.py
+pytest tests/test_rp1311_example8.py -q
+```
+
+Details: [docs/validation.md](docs/validation.md).
 
 ## Requirements
 
 - Python **3.11+**
-- Fortran is **not** required if you install the published `cea` wheel
+- `pip install cea` (Fortran **not** required for the published wheel)
 
 ## Install
 
 ```bash
+git clone https://github.com/Nikabanzai/RocketCAE.git
 cd RocketCAE
 python -m venv .venv
 
@@ -40,33 +67,26 @@ python -m pip install -e ".[dev]"
 ## Quick start
 
 ```bash
-# List curated fuels
 rocketcae list-pairs
 
-# LOX/LH2 (RP-1311 style)
+# LOX/LH2 near Example 8 conditions
 rocketcae run --pair lox_lh2 --of 5.55 --pc 53.3 --eps 25
 
-# LOX/RP-1 (CHEMA heritage)
+# LOX/RP-1 (CHEMA-style sample)
 rocketcae run --pair lox_rp1 --of 2.3 --pc 66.5 --eps 16
 
-# Sweep O/F → CSV in results/
 rocketcae sweep --pair lox_ch4 --param of --n 21
-
-# Optimize O/F for max Isp
 rocketcae optimize --pair lox_lh2 --vars of --objective isp
-
-# Rank all pairs at fixed Pc / ε
 rocketcae rank --pc 50 --eps 40
+rocketcae validate
 
-# GUI
 streamlit run app/streamlit_app.py
 ```
 
-Examples:
+If console scripts are not on `PATH`:
 
 ```bash
-python examples/run_lox_lh2.py
-python examples/sweep_lox_rp1.py
+python -m rocketcae.cli validate
 ```
 
 ## Curated propellant pairs
@@ -77,41 +97,58 @@ python examples/sweep_lox_rp1.py
 | `lox_rp1` | LOX / RP-1 |
 | `lox_ch4` | LOX / LCH4 |
 | `lox_ethanol` | LOX / Ethanol |
-| `nto_mmh` | NTO / MMH |
+| `nto_mmh` | NTO / MMH (`CH6N2(L)` in CEA) |
 | `nto_hydrazine` | NTO / Hydrazine |
 
-Species names follow the NASA CEA database. You can also pass arbitrary CEA names via `--fuel` / `--oxidizer`.
+Arbitrary CEA species: `--fuel` / `--oxidizer`.
 
 ## Project layout
 
 ```text
 RocketCAE/
-  src/rocketcae/     # library: models, CEA runner, sweeps, optimize, ranking, CLI
+  src/rocketcae/     # library + CLI + validation
   app/               # Streamlit GUI
   tests/
-  examples/
-  docs/heritage.md   # CHEMA thesis mapping
-  results/           # generated CSVs (gitignored content)
-  Chema/             # LOCAL ONLY — original MATLAB dump (gitignored)
+  examples/          # including rp1311_example8.py
+  docs/              # heritage, validation
+  results/           # generated CSVs (content gitignored)
 ```
 
-## Legacy CHEMA folder
+## Citing
 
-If you have the old MATLAB project under `Chema/`, keep it on disk for reference.
-It is **listed in `.gitignore`** (binaries, media, CAD, personal files). See [docs/heritage.md](docs/heritage.md).
+If you use RocketCAE, please cite NASA CEA / RP-1311 for the thermodynamics engine, and optionally this software (see [CITATION.cff](CITATION.cff)).
 
-## Tests
-
-```bash
-pytest -q
+```bibtex
+@software{RocketCAE2026,
+  author = {Kul, Muhammed Ali},
+  title  = {RocketCAE: Preliminary liquid rocket trades via NASA CEA},
+  year   = {2026},
+  url    = {https://github.com/Nikabanzai/RocketCAE},
+  note   = {Conceptual successor to the 2017 CHEMA graduation project (THK University)}
+}
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Issues and PRs welcome for propellant data, validation cases, and docs.
 
 ## Acknowledgements
 
 - **NASA CEA** — Chemical Equilibrium with Applications ([Apache-2.0](https://github.com/nasa/cea))
-- **CHEMA** — THK University graduation project (Kul, Seymen, Yıldız, Köroğlu)
+- **CHEMA (2017)** — Kul, Seymen, Yıldız, Köroğlu; THK University; advisors Balage & Körpe  
+  *Concept predecessor only; RocketCAE is independently implemented.*
+
+## Disclaimer
+
+Same spirit as CHEMA: theoretical results may differ greatly from reality. No liability for decisions based on these outputs.
 
 ## License
 
-Application code is provided under **Apache-2.0** for alignment with NASA CEA.
-CEA remains subject to its own license and NOTICE files.
+Application code: **Apache-2.0** (see [LICENSE](LICENSE)).  
+CEA is a separate dependency with its own license and NOTICE.
+
+## References
+
+1. McBride, B.J., Gordon, S., *Computer Program for Calculation of Complex Chemical Equilibrium Compositions and Applications II. Users Manual and Program Description*, NASA RP-1311, 1996. [NTRS 19960044559](https://ntrs.nasa.gov/citations/19960044559)  
+2. NASA CEA documentation — [Example 8 (RP-1311)](https://nasa.github.io/cea/examples/rocket/example8.html)  
+3. [nasa/cea](https://github.com/nasa/cea) on GitHub  

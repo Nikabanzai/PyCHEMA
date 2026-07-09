@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use RocketCAE, please cite it as below (and cite NASA CEA / RP-1311 for the thermodynamics engine)."
+type: software
+title: "RocketCAE: Preliminary liquid rocket trade studies via NASA CEA"
+version: 0.1.0
+date-released: "2026-07-09"
+url: "https://github.com/Nikabanzai/RocketCAE"
+repository-code: "https://github.com/Nikabanzai/RocketCAE"
+license: Apache-2.0
+authors:
+  - family-names: Kul
+    given-names: Muhammed Ali
+    email: muhammeda.kul@gmail.com
+abstract: >-
+  RocketCAE is a Python library, CLI, and Streamlit GUI for preliminary
+  liquid bipropellant rocket performance trades using NASA Chemical Equilibrium
+  with Applications (CEA). It is a modern conceptual successor to the 2017
+  CHEMA graduation project at the University of Turkish Aeronautical Association,
+  reimplemented independently on top of the official nasa/cea Python package.
+keywords:
+  - rocket propulsion
+  - chemical equilibrium
+  - NASA CEA
+  - liquid rocket engine
+  - optimization
+references:
+  - type: report
+    title: "Computer Program for Calculation of Complex Chemical Equilibrium Compositions and Applications II. Users Manual and Program Description"
+    authors:
+      - family-names: McBride
+        given-names: Bonnie J.
+      - family-names: Gordon
+        given-names: Sanford
+    year: 1996
+    institution:
+      name: NASA
+    number: RP-1311
+    url: "https://ntrs.nasa.gov/citations/19960044559"

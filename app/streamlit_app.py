@@ -29,7 +29,8 @@ st.set_page_config(page_title="RocketCAE", page_icon="🚀", layout="wide")
 st.title("RocketCAE")
 st.caption(
     "Preliminary liquid rocket performance explorer using NASA CEA. "
-    "Theoretical equilibrium results only — not flight hardware design."
+    "Theoretical equilibrium results only — not flight hardware design. "
+    "Conceptual continuation of the 2017 CHEMA project idea (new codebase)."
 )
 
 with st.expander("Disclaimer", expanded=False):

@@ -152,6 +152,14 @@ def cmd_pareto(args: argparse.Namespace) -> int:
     return 0
 
 
+
+def cmd_validate(_: argparse.Namespace) -> int:
+    from rocketcae.validation import format_validation_report, validation_passed
+    report = format_validation_report()
+    print(report)
+    return 0 if validation_passed() else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="rocketcae",
@@ -207,6 +215,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--eps", type=float, default=40.0)
     s.add_argument("--n", type=int, default=21)
     s.set_defaults(func=cmd_pareto)
+
+    
+    s = sub.add_parser("validate", help="Run RP-1311 Example 8 validation vs NASA published output")
+    s.set_defaults(func=cmd_validate)
 
     return p
 
