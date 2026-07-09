@@ -189,3 +189,7 @@ python -m pychema.cli nozzle --kind rao --dt-mm 80 --eps 25
 `
 
 See [docs/chema_gap_analysis.md](docs/chema_gap_analysis.md) and [docs/related_work.md](docs/related_work.md).
+
+## Pause / resume development
+
+See [docs/DEVELOPER_NOTES.md](docs/DEVELOPER_NOTES.md) for install/validate commands and the non-urgent backlog.
