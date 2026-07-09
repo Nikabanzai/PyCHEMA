@@ -1,0 +1,53 @@
+# RocketCAE — local / generated
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+test-results.xml
+
+# Results and plots (regenerate)
+results/*
+!results/.gitkeep
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Large local assets (keep on disk, do not publish)
+*.exe
+*.msi
+gcc-*/
+*.wav
+*.tif
+*.IGS
+*.SLDPRT
+*.zip
+
+# NASA reference PDFs and thesis PDF at repo root (large; keep local)
+/19950013764.pdf
+/19960044559.pdf
+/GraduationProject-Chema-AliM.KulYazSymen-MelihE.Yldz.pdf
+
+# Legacy MATLAB CHEMA dump (~87 MB media/CAD/binaries). Keep locally; not versioned.
+# Essential heritage notes live in docs/heritage.md
+Chema/
+
+# Optional local secrets
+.env
