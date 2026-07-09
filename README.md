@@ -1,5 +1,6 @@
 # PyCHEMA
 
+> **DOI:** [10.5281/zenodo.21278092](https://doi.org/10.5281/zenodo.21278092)  
 > **Formerly developed under the working name RocketCAE.** Renamed to **PyCHEMA** to honor the 2017 CHEMA project and avoid confusion with the unrelated PyPI package [RocketCEA](https://pypi.org/project/rocketcea/) and NASA's `cea` package.
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)

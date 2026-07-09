@@ -3,6 +3,7 @@ message: "If you use PyCHEMA, please cite it and the CHEMA 2017 report / NASA CE
 type: software
 title: "PyCHEMA: Preliminary liquid rocket trade studies via NASA CEA"
 version: 0.2.0
+doi: 10.5281/zenodo.21278092
 date-released: "2026-07-09"
 url: "https://github.com/Nikabanzai/PyCHEMA"
 repository-code: "https://github.com/Nikabanzai/PyCHEMA"
@@ -47,6 +48,8 @@ references:
     institution:
       name: University of Turkish Aeronautical Association
     identifiers:
+  - type: doi
+    value: "10.5281/zenodo.21278092"
       - type: doi
         value: "10.13140/RG.2.2.31672.55043"
   - type: report

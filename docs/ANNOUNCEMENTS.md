@@ -8,7 +8,7 @@
 **Depends on:** official NASA `cea` (not RocketCEA)
 **Heritage:** CHEMA 2017, DOI 10.13140/RG.2.2.31672.55043
 
-Replace `[ZENODO_DOI]` after you publish the Zenodo archive.
+Replace `10.5281/zenodo.21278092` after you publish the Zenodo archive.
 
 ---
 
@@ -78,7 +78,7 @@ Repository: https://github.com/Nikabanzai/PyCHEMA
   title   = {PyCHEMA: Open-Source Preliminary Liquid Rocket Trade Studies with NASA CEA},
   year    = {2026},
   version = {0.2.0},
-  doi     = {[ZENODO_DOI]},
+  doi     = {10.5281/zenodo.21278092},
   url     = {https://github.com/Nikabanzai/PyCHEMA},
   note    = {Continues the CHEMA 2017 concept (DOI 10.13140/RG.2.2.31672.55043)}
 }
@@ -106,7 +106,7 @@ sizing helpers, and Rao nozzle geometry with CAD export.
 This project is not the PyPI package RocketCEA. It uses NASA's modern cea library.
 
 GitHub: https://github.com/Nikabanzai/PyCHEMA
-Zenodo: [ZENODO_DOI]
+Zenodo: 10.5281/zenodo.21278092
 
 Educational and conceptual use only — not a substitute for certified flight design.
 ```
@@ -132,7 +132,7 @@ Rao nozzle contours, and NASA RP-1311 validation.
 Not to be confused with the separate PyPI package RocketCEA.
 
 GitHub: https://github.com/Nikabanzai/PyCHEMA
-Zenodo: [ZENODO_DOI]
+Zenodo: 10.5281/zenodo.21278092
 
 Educational / conceptual use only. Feedback welcome.
 ```
@@ -154,7 +154,7 @@ Note: PyCHEMA is unrelated to the PyPI package "RocketCEA"; we use NASA's modern
 "cea" package. (Briefly developed as "RocketCAE" before the rename.)
 
 Repo: https://github.com/Nikabanzai/PyCHEMA
-Archive: [ZENODO_DOI]
+Archive: 10.5281/zenodo.21278092
 
 #Aerospace #Propulsion #OpenSource #Python #RocketScience #NASA
 ```
@@ -190,7 +190,7 @@ We renamed from a working title "RocketCAE" to PyCHEMA to avoid confusion with t
 unrelated PyPI package RocketCEA and to honor CHEMA.
 
 GitHub: https://github.com/Nikabanzai/PyCHEMA
-Zenodo: [ZENODO_DOI after publish]
+Zenodo: 10.5281/zenodo.21278092
 
 Happy to adjust wording if you prefer.
 
@@ -225,7 +225,7 @@ pychema validate --case full
 
 ### Cite
 CHEMA 2017 DOI 10.13140/RG.2.2.31672.55043
-This software: [ZENODO_DOI]
+This software: 10.5281/zenodo.21278092
 ```
 
 ---
