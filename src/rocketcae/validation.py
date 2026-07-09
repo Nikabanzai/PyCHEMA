@@ -419,3 +419,24 @@ def format_validation_report(
     lines.append("-" * 84)
     lines.append(f"{n_ok}/{len(rows)} checkpoints passed")
     return "\n".join(lines)
+
+
+# Re-export smoke suite for a single validation entry point
+from rocketcae.rp1311_smoke import (  # noqa: E402
+    format_smoke_report,
+    run_all_official_samples,
+    run_official_sample,
+    smoke_passed,
+)
+from rocketcae.rp1311_catalog import RP1311_SAMPLES, list_samples  # noqa: E402
+
+
+def full_validation_report() -> str:
+    """Numerical Ex.8+13 plus smoke of all 14 official drivers."""
+    num = format_validation_report(cases="all")
+    smoke = run_all_official_samples()
+    return num + "\n\n" + format_smoke_report(smoke)
+
+
+def full_validation_passed() -> bool:
+    return validation_passed(cases="all") and smoke_passed()

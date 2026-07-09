@@ -29,27 +29,27 @@ Original MATLAB dumps, media, and binaries are **not** published here (local-onl
 | Maximize Isp / c\* / density-Isp | `rocketcae optimize` |
 | Rank curated propellant pairs | `rocketcae rank` |
 | Pareto (max Isp, min Tc) | `rocketcae pareto` |
-| **RP-1311 Examples 8 & 13 validation** | `rocketcae validate` |
+| **RP-1311 samples 1–14** (smoke + Ex.8/13 numerical) | `rocketcae validate` |
 | GUI | `streamlit run app/streamlit_app.py` |
 
-## Validation (NASA RP-1311 Examples 8 & 13)
+## Validation (NASA RP-1311 samples 1–14)
 
-RocketCAE checks live CEA results against published NASA cases:
-
-| Case | Focus |
-|------|--------|
-| **Example 8** | H₂(L)/O₂(L) IAC rocket performance |
-| **Example 13** | N₂H₄+Be / H₂O₂ with `insert=BeO(L)` and condensed products |
+| Mode | What it does |
+|------|----------------|
+| `--case list` | Catalog of all 14 classic SAMPLE PROBLEMS |
+| `--case samples` | Smoke-run official `cea` drivers example1…14 |
+| `--case ex8` / `ex13` / `all` | Numerical table checks for Ex.8 & Ex.13 |
+| `--case full` | Numerical + smoke |
 
 ```bash
-python -m rocketcae.cli validate              # both
-python -m rocketcae.cli validate --case ex13
-python examples/rp1311_example8.py
-python examples/rp1311_example13.py
-pytest tests/test_rp1311_example8.py -q
+python -m rocketcae.cli validate --case list
+python -m rocketcae.cli validate --case samples
+python -m rocketcae.cli validate --case all
+python -m rocketcae.cli validate --case full
+python examples/run_rp1311_all.py
 ```
 
-Details: [docs/validation.md](docs/validation.md).
+Docs: [docs/rp1311_samples.md](docs/rp1311_samples.md), [docs/validation.md](docs/validation.md).
 
 ## Requirements
 
@@ -158,4 +158,6 @@ CEA is a separate dependency with its own license and NOTICE.
 1. McBride, B.J., Gordon, S., *Computer Program for Calculation of Complex Chemical Equilibrium Compositions and Applications II. Users Manual and Program Description*, NASA RP-1311, 1996. [NTRS 19960044559](https://ntrs.nasa.gov/citations/19960044559)  
 2. NASA CEA documentation — [Example 8 (RP-1311)](https://nasa.github.io/cea/examples/rocket/example8.html)  
 3. [nasa/cea](https://github.com/nasa/cea) on GitHub  
+
+
 

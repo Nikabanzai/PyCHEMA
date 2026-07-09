@@ -84,3 +84,14 @@ Per checkpoint: relative error ≤ **0.5%** **or** quantity-specific absolute to
 1. McBride, B.J., Gordon, S., NASA RP-1311, 1996. https://ntrs.nasa.gov/citations/19960044559  
 2. https://nasa.github.io/cea/examples/rocket/example8.html  
 3. https://nasa.github.io/cea/examples/rocket/example13.html  
+
+---
+
+## Full SAMPLE PROBLEMS (1–14)
+
+See [rp1311_samples.md](rp1311_samples.md) for the complete catalog matching the classic CEA SAMPLE PROBLEMS listing (tp, tv, hp, uv, detonation, shock, rocket IAC/FAC).
+
+```bash
+python -m rocketcae.cli validate --case samples   # smoke all 14
+python -m rocketcae.cli validate --case full      # Ex.8+13 numerical + smoke
+```

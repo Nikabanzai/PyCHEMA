@@ -154,11 +154,26 @@ def cmd_pareto(args: argparse.Namespace) -> int:
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
-    from rocketcae.validation import format_validation_report, validation_passed
+    from rocketcae import rp1311_catalog, rp1311_smoke, validation
+
     case = getattr(args, "case", "all")
-    report = format_validation_report(cases=case)
+    if case == "list":
+        for s in rp1311_catalog.list_samples():
+            flag = " [numerical]" if s.numerical_validation else ""
+            print(f"  {s.number:2d}  {s.family:12s}  {s.title}{flag}")
+            print(f"      {s.summary}")
+        return 0
+    if case == "samples":
+        results = rp1311_smoke.run_all_official_samples()
+        print(rp1311_smoke.format_smoke_report(results))
+        return 0 if rp1311_smoke.smoke_passed(results) else 1
+    if case == "full":
+        print(validation.full_validation_report())
+        return 0 if validation.full_validation_passed() else 1
+    # ex8 / ex13 / all (numerical only)
+    report = validation.format_validation_report(cases=case)
     print(report)
-    return 0 if validation_passed(cases=case) else 1
+    return 0 if validation.validation_passed(cases=case) else 1
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -221,9 +236,9 @@ def build_parser() -> argparse.ArgumentParser:
     s = sub.add_parser("validate", help="Run RP-1311 Example 8/13 validation vs NASA published output")
     s.add_argument(
         "--case",
-        choices=["ex8", "ex13", "all"],
+        choices=["ex8", "ex13", "all", "samples", "full", "list"],
         default="all",
-        help="Which RP-1311 example(s) to validate (default: all)",
+        help="ex8/ex13/all=numerical tables; samples=smoke 1-14; full=both; list=catalog",
     )
     s.set_defaults(func=cmd_validate)
 
