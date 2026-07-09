@@ -1,0 +1,14 @@
+Fortran:
+		
+ 
+Directed from: https://fortran-lang.org/learn/os_setup/install_gfortran/
+
+https://www.equation.com/servlet/equation.cmd?fa=fortran
+
+gcc-16.1.0-64.exe
+
+https://nasa.github.io/cea/developer_guide.html
+https://nasa.github.io/cea/examples/rocket/example8.html
+https://ntrs.nasa.gov/citations/19950013764
+https://ntrs.nasa.gov/citations/19960044559
+https://www.nasa.gov/glenn/research/chemical-equilibrium-with-applications/
