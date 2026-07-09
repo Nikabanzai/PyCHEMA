@@ -1,23 +1,35 @@
-# Validation against NASA RP-1311 Example 8
+# Validation against NASA RP-1311
 
-## Case definition
+RocketCAE validates live NASA CEA results against published documentation examples.
 
-From the [CEA Python docs — Example 8](https://nasa.github.io/cea/examples/rocket/example8.html) and NASA RP-1311 [[1]](#references):
+```bash
+python -m rocketcae.cli validate              # Examples 8 + 13
+python -m rocketcae.cli validate --case ex8
+python -m rocketcae.cli validate --case ex13
+python examples/rp1311_example8.py
+python examples/rp1311_example13.py
+pytest tests/test_rp1311_example8.py -q
+```
+
+Implementation: `src/rocketcae/validation.py`.
+
+**API note:** Older docs show `b"Species"` byte strings; current `cea` 3.x accepts plain `str` names (used here).
+
+---
+
+## Example 8 — LOX / LH2 (IAC)
+
+Source: [Example 8](https://nasa.github.io/cea/examples/rocket/example8.html)
 
 | Parameter | Value |
 |-----------|--------|
-| Mode | Rocket, infinite-area combustor (IAC) |
-| Fuel | H2(L) @ 20.27 K |
-| Oxidizer | O2(L) @ 90.17 K |
-| O/F (mass) | 5.55157 |
+| Fuel / Ox | H2(L) @ 20.27 K / O2(L) @ 90.17 K |
+| O/F | 5.55157 |
 | Pc | 53.3172 bar |
 | Subsonic Ae/At | 1.58 |
 | Supersonic Ae/At | 25, 50, 75 |
-| Pressure ratios | 10, 100, 1000 |
 
-**Note:** Older docs show `b"H2(L)"` byte strings; current `cea` 3.x accepts plain `str` species names (used by RocketCAE).
-
-## Published performance checkpoints (excerpt)
+### Published performance (excerpt)
 
 | Station | T [K] | Isp [m/s] | Isp_vac [m/s] | Cf | c* [m/s] |
 |---------|-------|-----------|---------------|-----|----------|
@@ -27,19 +39,48 @@ From the [CEA Python docs — Example 8](https://nasa.github.io/cea/examples/roc
 | Ae/At = 50 | 1219.613 | 4309.122 | 4487.303 | 1.8476 | 2332.34 |
 | Ae/At = 75 | 1088.640 | 4399.121 | 4554.913 | 1.8861 | 2332.34 |
 
-## How RocketCAE checks
+---
 
-```bash
-python -m rocketcae.cli validate
-python examples/rp1311_example8.py
-pytest tests/test_rp1311_example8.py -q
-```
+## Example 13 — N2H4(L)+Be(a) / H2O2(L) with BeO(L) insert
 
-Implementation: `src/rocketcae/validation.py`.
+Source: [Example 13](https://nasa.github.io/cea/examples/rocket/example13.html)
 
-Default pass criteria (per checkpoint): relative error ≤ **0.5%** **or** absolute tolerance (e.g. 5 m/s on Isp, 5 K on T). Modern CEA 3.x may differ slightly from the 1996 printed table while remaining an excellent engineering match.
+Demonstrates:
+
+- Multi-component fuel (80% N2H4(L) + 20% Be(a) by weight)
+- `insert=["BeO(L)"]` for equilibrium initial guess
+- Non-negligible **condensed** products (BeO(L), BeO(a), BeO(b))
+
+| Parameter | Value |
+|-----------|--------|
+| Fuel wt | N2H4(L) 0.8, Be(a) 0.2 |
+| Oxidizer | H2O2(L) 100% |
+| pct_fuel | 67 → O/F = 33/67 |
+| T reactants | 298.15 K |
+| Pc | 3000 psi |
+| pi_p | 3, 10, 30, 300 |
+| trace | 1e-10 |
+
+### Published performance (excerpt)
+
+| Station | Ae/At | T [K] | Isp [s] | Ivac [s] | Cf | Condensed |
+|---------|-------|-------|---------|----------|-----|-----------|
+| Chamber | 0 | 3002.540 | — | — | — | BeO(L)≈0.192 |
+| Throat | 1.0 | 2851.000 | 121.571 | 243.396 | 0.6124 | BeO(L)≈0.173 |
+| — | 1.2363 | 2851.000 | 181.306 | 263.111 | 0.9133 | BeO(L)≈0.032 |
+| — | 5.3385 | 2068.730 | 303.294 | 338.619 | 1.5279 | BeO(a)≈0.199 |
+| — | 30.0004 | 1398.106 | 364.613 | 384.464 | 1.8368 | BeO(a)≈0.199 |
+
+c\* = 6386.75 ft/s (constant).
+
+---
+
+## Pass criteria
+
+Per checkpoint: relative error ≤ **0.5%** **or** quantity-specific absolute tolerance (e.g. 5 K on T, 0.5 s on Isp for Ex.13, 0.002 on major mole fractions).
 
 ## References
 
 1. McBride, B.J., Gordon, S., NASA RP-1311, 1996. https://ntrs.nasa.gov/citations/19960044559  
 2. https://nasa.github.io/cea/examples/rocket/example8.html  
+3. https://nasa.github.io/cea/examples/rocket/example13.html  

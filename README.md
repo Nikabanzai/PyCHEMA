@@ -29,17 +29,23 @@ Original MATLAB dumps, media, and binaries are **not** published here (local-onl
 | Maximize Isp / c\* / density-Isp | `rocketcae optimize` |
 | Rank curated propellant pairs | `rocketcae rank` |
 | Pareto (max Isp, min Tc) | `rocketcae pareto` |
-| **RP-1311 Example 8 validation** | `rocketcae validate` |
+| **RP-1311 Examples 8 & 13 validation** | `rocketcae validate` |
 | GUI | `streamlit run app/streamlit_app.py` |
 
-## Validation (NASA RP-1311 Example 8)
+## Validation (NASA RP-1311 Examples 8 & 13)
 
-RocketCAE checks live CEA results against the published **Example 8** rocket case (IAC, H₂(L)/O₂(L), O/F ≈ 5.55, Pc ≈ 53.3 bar) from the CEA documentation and NASA RP-1311 [[1]](#references).
+RocketCAE checks live CEA results against published NASA cases:
+
+| Case | Focus |
+|------|--------|
+| **Example 8** | H₂(L)/O₂(L) IAC rocket performance |
+| **Example 13** | N₂H₄+Be / H₂O₂ with `insert=BeO(L)` and condensed products |
 
 ```bash
-python -m rocketcae.cli validate
-# or
+python -m rocketcae.cli validate              # both
+python -m rocketcae.cli validate --case ex13
 python examples/rp1311_example8.py
+python examples/rp1311_example13.py
 pytest tests/test_rp1311_example8.py -q
 ```
 
@@ -152,3 +158,4 @@ CEA is a separate dependency with its own license and NOTICE.
 1. McBride, B.J., Gordon, S., *Computer Program for Calculation of Complex Chemical Equilibrium Compositions and Applications II. Users Manual and Program Description*, NASA RP-1311, 1996. [NTRS 19960044559](https://ntrs.nasa.gov/citations/19960044559)  
 2. NASA CEA documentation — [Example 8 (RP-1311)](https://nasa.github.io/cea/examples/rocket/example8.html)  
 3. [nasa/cea](https://github.com/nasa/cea) on GitHub  
+
