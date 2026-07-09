@@ -236,6 +236,73 @@ def cmd_size(args: argparse.Namespace) -> int:
     return 0
 
 
+
+def cmd_design(args: argparse.Namespace) -> int:
+    from rocketcae.design import design_engine
+
+    d = design_engine(
+        pair_key=args.pair,
+        thrust_n=args.thrust,
+        pc_bar=args.pc,
+        of_ratio=args.of,
+        area_ratio=args.eps,
+        bell_fraction=args.bell,
+        include_chamber=not args.no_chamber,
+    )
+    if not d.success:
+        print(f"FAILED: {d.message}")
+        return 1
+    print(f"Pair          : {d.pair_key}")
+    print(f"Thrust        : {d.thrust_n:.1f} N")
+    print(f"Isp / Isp_vac : {d.cea.isp_s:.2f} / {d.cea.isp_vac_s:.2f} s")
+    print(f"Tc / c*       : {d.cea.tc_k:.0f} K / {d.cea.cstar_m_s:.0f} m/s")
+    print(f"Cf            : {d.cea.cf:.4f}")
+    print(f"Dt / De       : {d.throat_diameter_m*1000:.2f} / {d.exit_diameter_m*1000:.2f} mm")
+    print(f"mdot          : {d.mdot_kg_s:.4f} kg/s")
+    if d.contour:
+        print(f"Contour       : {d.contour.contour_type}, L={d.contour.length_m*1000:.1f} mm, n={len(d.contour.x)}")
+        if args.csv:
+            p = d.export_contour_csv(args.csv)
+            print(f"CSV           : {p}")
+        if args.cad:
+            p = d.export_contour_cad(args.cad)
+            print(f"CAD XYZ       : {p}")
+    return 0
+
+
+def cmd_nozzle(args: argparse.Namespace) -> int:
+    from rocketcae.nozzle import conical_contour, rao_bell_contour
+    import math
+
+    if args.dt_mm:
+        rt = args.dt_mm / 2000.0
+    elif args.at_cm2:
+        rt = math.sqrt((args.at_cm2 * 1e-4) / math.pi)
+    else:
+        print("Provide --dt-mm or --at-cm2")
+        return 2
+    if args.kind == "conical":
+        c = conical_contour(rt, args.eps, half_angle_deg=args.half_angle)
+    else:
+        c = rao_bell_contour(
+            rt,
+            args.eps,
+            bell_fraction=args.bell,
+            include_chamber=not args.no_chamber,
+            contraction_ratio=args.contraction,
+        )
+    print(f"Type   : {c.contour_type}")
+    print(f"Rt     : {c.throat_radius_m*1000:.3f} mm")
+    print(f"Re     : {c.exit_radius_m*1000:.3f} mm")
+    print(f"Length : {c.length_m*1000:.2f} mm")
+    print(f"Points : {len(c.x)}")
+    if args.csv:
+        print("CSV", c.to_csv(args.csv))
+    if args.cad:
+        print("CAD", c.to_xyz_cad(args.cad))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="rocketcae",
@@ -328,6 +395,32 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--use-sl-isp", action="store_true", help="Use delivered Isp instead of vacuum")
     s.add_argument("--out", default="results/design_brief.md")
     s.set_defaults(func=cmd_mission)
+
+
+    s = sub.add_parser("design", help="One-shot: thrust+Pc+pair -> CEA + Rao nozzle + CAD")
+    s.add_argument("--pair", default="lox_rp1")
+    s.add_argument("--thrust", type=float, default=50000.0, help="Thrust [N]")
+    s.add_argument("--pc", type=float, default=50.0)
+    s.add_argument("--of", type=float, default=None)
+    s.add_argument("--eps", type=float, default=40.0)
+    s.add_argument("--bell", type=float, default=0.8, help="Rao length fraction of 15-deg cone")
+    s.add_argument("--no-chamber", action="store_true")
+    s.add_argument("--csv", default="results/nozzle_contour.csv")
+    s.add_argument("--cad", default="results/nozzle_contour.xyz")
+    s.set_defaults(func=cmd_design)
+
+    s = sub.add_parser("nozzle", help="Generate conical or Rao contour only")
+    s.add_argument("--kind", choices=["rao", "conical"], default="rao")
+    s.add_argument("--dt-mm", type=float, default=None, help="Throat diameter [mm]")
+    s.add_argument("--at-cm2", type=float, default=None, help="Throat area [cm^2]")
+    s.add_argument("--eps", type=float, default=25.0)
+    s.add_argument("--bell", type=float, default=0.8)
+    s.add_argument("--half-angle", type=float, default=15.0)
+    s.add_argument("--contraction", type=float, default=4.0)
+    s.add_argument("--no-chamber", action="store_true")
+    s.add_argument("--csv", default="results/nozzle_only.csv")
+    s.add_argument("--cad", default="results/nozzle_only.xyz")
+    s.set_defaults(func=cmd_nozzle)
 
     return p
 

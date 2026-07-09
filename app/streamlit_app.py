@@ -21,7 +21,41 @@ with st.sidebar:
     st.caption("CEA trades -- not flight hardware")
     st.markdown("> *May your c* be high, walls cool, delta-v non-weaponized.*")
     st.markdown("**Tagline:** Pad-to-orbit theory -- not silo kits.")
-    st.divider()
+    
+with tab_nozzle:
+    st.subheader("Rao / conical nozzle (CHEMA heritage)")
+    st.caption("80% Rao bell as in ChemaV7.m — export CSV or XYZ for SolidWorks curve import.")
+    kind = st.selectbox("Contour", ["rao", "conical"])
+    c1, c2, c3 = st.columns(3)
+    dt = c1.number_input("Throat diameter Dt [mm]", 1.0, 500.0, 80.0)
+    eps = c2.number_input("Ae/At", 2.0, 200.0, 25.0, key="nzeps")
+    bell = c3.slider("Bell fraction", 0.6, 1.0, 0.8, 0.05)
+    chamber = st.checkbox("Include chamber + convergent", value=True)
+    if st.button("Generate contour", type="primary"):
+        from rocketcae.nozzle import conical_contour, rao_bell_contour
+        rt = dt / 2000.0
+        if kind == "conical":
+            cont = conical_contour(rt, eps)
+        else:
+            cont = rao_bell_contour(rt, eps, bell_fraction=bell, include_chamber=chamber)
+        df = cont.to_dataframe()
+        st.line_chart(df.set_index("x_mm")[["y_mm"]])
+        # full profile +/- radius
+        import pandas as pd
+        prof = pd.DataFrame({"x_mm": list(df.x_mm) + list(df.x_mm[::-1]), "y_mm": list(df.y_mm) + list((-df.y_mm)[::-1])})
+        st.scatter_chart(prof, x="x_mm", y="y_mm")
+        st.metric("Length", f"{cont.length_m*1000:.1f} mm")
+        st.metric("Exit diameter", f"{2*cont.exit_radius_m*1000:.1f} mm")
+        csv_bytes = df.to_csv(index=False).encode()
+        st.download_button("Download CSV", csv_bytes, "nozzle_contour.csv", "text/csv")
+        xyz = "\n".join(f"{x*1000:.6f},{y*1000:.6f},0.000000" for x, y in zip(cont.x, cont.y))
+        st.download_button("Download XYZ (SolidWorks)", xyz, "nozzle_contour.xyz", "text/plain")
+        cont.to_csv("results/nozzle_contour.csv")
+        cont.to_xyz_cad("results/nozzle_contour.xyz")
+        st.success("Also wrote results/nozzle_contour.csv and .xyz")
+
+
+st.divider()
     st.markdown("[GitHub](https://github.com/Nikabanzai/RocketCAE) | [CEA docs](https://nasa.github.io/cea/)")
 
 st.title("RocketCAE")
@@ -40,8 +74,8 @@ with st.expander("Validation", expanded=False):
 
 pairs = list_propellant_pairs()
 pair_labels = {p.label: p.key for p in pairs}
-tabs = st.tabs(["Single run", "O/F sweep", "Optimize", "Rank", "Pareto", "Mission helper"])
-tab_run, tab_sweep, tab_opt, tab_rank, tab_pareto, tab_mission = tabs
+tabs = st.tabs(["Single run", "O/F sweep", "Optimize", "Rank", "Pareto", "Mission helper", "Nozzle CAD"])
+tab_run, tab_sweep, tab_opt, tab_rank, tab_pareto, tab_mission, tab_nozzle = tabs
 
 with tab_run:
     c1, c2, c3 = st.columns(3)
@@ -189,6 +223,40 @@ with tab_mission:
             st.download_button("Download design brief", res.brief_markdown, "design_brief.md", "text/markdown")
             with st.expander("Brief", expanded=True):
                 st.markdown(res.brief_markdown)
+
+
+with tab_nozzle:
+    st.subheader("Rao / conical nozzle (CHEMA heritage)")
+    st.caption("80% Rao bell as in ChemaV7.m — export CSV or XYZ for SolidWorks curve import.")
+    kind = st.selectbox("Contour", ["rao", "conical"])
+    c1, c2, c3 = st.columns(3)
+    dt = c1.number_input("Throat diameter Dt [mm]", 1.0, 500.0, 80.0)
+    eps = c2.number_input("Ae/At", 2.0, 200.0, 25.0, key="nzeps")
+    bell = c3.slider("Bell fraction", 0.6, 1.0, 0.8, 0.05)
+    chamber = st.checkbox("Include chamber + convergent", value=True)
+    if st.button("Generate contour", type="primary"):
+        from rocketcae.nozzle import conical_contour, rao_bell_contour
+        rt = dt / 2000.0
+        if kind == "conical":
+            cont = conical_contour(rt, eps)
+        else:
+            cont = rao_bell_contour(rt, eps, bell_fraction=bell, include_chamber=chamber)
+        df = cont.to_dataframe()
+        st.line_chart(df.set_index("x_mm")[["y_mm"]])
+        # full profile +/- radius
+        import pandas as pd
+        prof = pd.DataFrame({"x_mm": list(df.x_mm) + list(df.x_mm[::-1]), "y_mm": list(df.y_mm) + list((-df.y_mm)[::-1])})
+        st.scatter_chart(prof, x="x_mm", y="y_mm")
+        st.metric("Length", f"{cont.length_m*1000:.1f} mm")
+        st.metric("Exit diameter", f"{2*cont.exit_radius_m*1000:.1f} mm")
+        csv_bytes = df.to_csv(index=False).encode()
+        st.download_button("Download CSV", csv_bytes, "nozzle_contour.csv", "text/csv")
+        xyz = "\n".join(f"{x*1000:.6f},{y*1000:.6f},0.000000" for x, y in zip(cont.x, cont.y))
+        st.download_button("Download XYZ (SolidWorks)", xyz, "nozzle_contour.xyz", "text/plain")
+        cont.to_csv("results/nozzle_contour.csv")
+        cont.to_xyz_cad("results/nozzle_contour.xyz")
+        st.success("Also wrote results/nozzle_contour.csv and .xyz")
+
 
 st.divider()
 st.markdown("CEA | RocketCAE | Peaceful propulsion trades | ICBM jokes: politely declined")

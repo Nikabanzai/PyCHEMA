@@ -79,3 +79,15 @@ Do **not** copy their code blindly if licenses conflict with how we vendor; **re
 | mvernacc/aerospike… | **No** — focused & useful | **Yes** — CAD export, live plots; GPL caution | **Low/medium** (niche) |
 
 **Neither is trash.** RocketCAE’s differentiator remains: official NASA `cea`, RP-1311 validation, CHEMA heritage, Streamlit + mission sizing. Borrow *patterns*, keep our CEA stack, reimplement geometry with citations.
+
+---
+
+## Implemented in RocketCAE (from this review)
+
+| Feature | Module / command |
+|---------|------------------|
+| Rao 80% bell + chamber (CHEMA) | `rocketcae.nozzle`, `rocketcae nozzle` |
+| CAD XYZ + CSV export | `to_xyz_cad`, `to_csv` |
+| design_engine(thrust, Pc, pair) | `rocketcae.design`, `rocketcae design` |
+| GUI Nozzle CAD tab | Streamlit |
+| Gap analysis vs CHEMA | `docs/chema_gap_analysis.md` |

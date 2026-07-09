@@ -174,3 +174,15 @@ See [docs/engineering_helpers.md](docs/engineering_helpers.md) for Δv sizing, t
 
 Open-source LRE tools we study for ideas (not dependencies): see [docs/related_work.md](docs/related_work.md) (e.g. cmflannery/rocket, aerospike GUI).
 
+
+## Nozzle geometry (CHEMA Rao restored)
+
+`ash
+# One-shot design: CEA + Rao contour + CAD files
+python -m rocketcae.cli design --pair lox_rp1 --thrust 50000 --pc 50 --eps 25
+
+# Contour only
+python -m rocketcae.cli nozzle --kind rao --dt-mm 80 --eps 25
+`
+
+See [docs/chema_gap_analysis.md](docs/chema_gap_analysis.md) and [docs/related_work.md](docs/related_work.md).
